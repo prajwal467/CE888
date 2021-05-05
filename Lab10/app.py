@@ -20,14 +20,6 @@ def get_predictions(price, Tax, Driver_Age, Licence_Length_Years, req_model):
     if req_model == 'Logistic':
         #print(req_model)
         return logistic.predict(vals)[0]
-
-    elif req_model == 'RandomForest':
-        #print(req_model)
-        return randomforest.predict(vals)[0]
-
-    elif req_model == 'SVM':
-        #print(req_model)
-        return svm_model.predict(vals)[0]
     else:
         return "Cannot Predict"
 
