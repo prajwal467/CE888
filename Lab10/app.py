@@ -11,12 +11,6 @@ path = os.getcwd()
 with open('Models/logistic_model.pkl', 'rb') as f:
     logistic = pickle.load(f)
 
-with open('Models/RF_model.pkl', 'rb') as f:
-    randomforest = pickle.load(f)
-
-with open('Models/svm_clf_model.pkl', 'rb') as f:
-    svm_model = pickle.load(f)
-
 
 def get_predictions(price, Tax, Driver_Age, Licence_Length_Years, req_model):
     mylist = [Driver_Age, Tax, price, Licence_Length_Years]
