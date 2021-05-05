@@ -1,0 +1,679 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "LogisticsRegressionmodel.ipynb",
+      "provenance": [],
+      "authorship_tag": "ABX9TyNRs4w688FsdbmCZKygPLLP",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/prajwal467/CE888/blob/main/Lab10/Lab10\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "fCqLo8swQIcp"
+      },
+      "source": [
+        "import pandas as pd\n",
+        "import matplotlib.pyplot as plt\n"
+      ],
+      "execution_count": 2,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "n_-yttdbP9K_"
+      },
+      "source": [
+        "df = pd.read_csv('heart.csv')"
+      ],
+      "execution_count": 3,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 202
+        },
+        "id": "pWbn3-cjQWYJ",
+        "outputId": "fa1edb66-f97a-4021-d702-c8d79ad61382"
+      },
+      "source": [
+        "df.head()"
+      ],
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>age</th>\n",
+              "      <th>sex</th>\n",
+              "      <th>cp</th>\n",
+              "      <th>trestbps</th>\n",
+              "      <th>chol</th>\n",
+              "      <th>fbs</th>\n",
+              "      <th>restecg</th>\n",
+              "      <th>thalach</th>\n",
+              "      <th>exang</th>\n",
+              "      <th>oldpeak</th>\n",
+              "      <th>slope</th>\n",
+              "      <th>ca</th>\n",
+              "      <th>thal</th>\n",
+              "      <th>target</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>63</td>\n",
+              "      <td>1</td>\n",
+              "      <td>3</td>\n",
+              "      <td>145</td>\n",
+              "      <td>233</td>\n",
+              "      <td>1</td>\n",
+              "      <td>0</td>\n",
+              "      <td>150</td>\n",
+              "      <td>0</td>\n",
+              "      <td>2.3</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1</td>\n",
+              "      <td>1</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>37</td>\n",
+              "      <td>1</td>\n",
+              "      <td>2</td>\n",
+              "      <td>130</td>\n",
+              "      <td>250</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1</td>\n",
+              "      <td>187</td>\n",
+              "      <td>0</td>\n",
+              "      <td>3.5</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>2</td>\n",
+              "      <td>1</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>41</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1</td>\n",
+              "      <td>130</td>\n",
+              "      <td>204</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>172</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1.4</td>\n",
+              "      <td>2</td>\n",
+              "      <td>0</td>\n",
+              "      <td>2</td>\n",
+              "      <td>1</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>56</td>\n",
+              "      <td>1</td>\n",
+              "      <td>1</td>\n",
+              "      <td>120</td>\n",
+              "      <td>236</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1</td>\n",
+              "      <td>178</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0.8</td>\n",
+              "      <td>2</td>\n",
+              "      <td>0</td>\n",
+              "      <td>2</td>\n",
+              "      <td>1</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>57</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>120</td>\n",
+              "      <td>354</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1</td>\n",
+              "      <td>163</td>\n",
+              "      <td>1</td>\n",
+              "      <td>0.6</td>\n",
+              "      <td>2</td>\n",
+              "      <td>0</td>\n",
+              "      <td>2</td>\n",
+              "      <td>1</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "   age  sex  cp  trestbps  chol  fbs  ...  exang  oldpeak  slope  ca  thal  target\n",
+              "0   63    1   3       145   233    1  ...      0      2.3      0   0     1       1\n",
+              "1   37    1   2       130   250    0  ...      0      3.5      0   0     2       1\n",
+              "2   41    0   1       130   204    0  ...      0      1.4      2   0     2       1\n",
+              "3   56    1   1       120   236    0  ...      0      0.8      2   0     2       1\n",
+              "4   57    0   0       120   354    0  ...      1      0.6      2   0     2       1\n",
+              "\n",
+              "[5 rows x 14 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 4
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "SYTyeq98Qa-u"
+      },
+      "source": [
+        "x = df.drop('target', axis=1)\n",
+        "y = df['target']"
+      ],
+      "execution_count": 6,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 415
+        },
+        "id": "zjSNs91FQkaH",
+        "outputId": "ebdf4c6e-b5f8-4bf5-9da2-f1f3bdbb7bc9"
+      },
+      "source": [
+        "from sklearn.preprocessing import StandardScaler\n",
+        "\n",
+        "scaler = StandardScaler()\n",
+        "\n",
+        "num_cols = ['age', 'trestbps', 'chol', 'thalach','oldpeak']\n",
+        "x[num_cols] = scaler.fit_transform(x[num_cols])\n",
+        "x"
+      ],
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>age</th>\n",
+              "      <th>sex</th>\n",
+              "      <th>cp</th>\n",
+              "      <th>trestbps</th>\n",
+              "      <th>chol</th>\n",
+              "      <th>fbs</th>\n",
+              "      <th>restecg</th>\n",
+              "      <th>thalach</th>\n",
+              "      <th>exang</th>\n",
+              "      <th>oldpeak</th>\n",
+              "      <th>slope</th>\n",
+              "      <th>ca</th>\n",
+              "      <th>thal</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>0.952197</td>\n",
+              "      <td>1</td>\n",
+              "      <td>3</td>\n",
+              "      <td>0.763956</td>\n",
+              "      <td>-0.256334</td>\n",
+              "      <td>1</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0.015443</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1.087338</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>-1.915313</td>\n",
+              "      <td>1</td>\n",
+              "      <td>2</td>\n",
+              "      <td>-0.092738</td>\n",
+              "      <td>0.072199</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1</td>\n",
+              "      <td>1.633471</td>\n",
+              "      <td>0</td>\n",
+              "      <td>2.122573</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>2</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>-1.474158</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1</td>\n",
+              "      <td>-0.092738</td>\n",
+              "      <td>-0.816773</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0.977514</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0.310912</td>\n",
+              "      <td>2</td>\n",
+              "      <td>0</td>\n",
+              "      <td>2</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>0.180175</td>\n",
+              "      <td>1</td>\n",
+              "      <td>1</td>\n",
+              "      <td>-0.663867</td>\n",
+              "      <td>-0.198357</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1</td>\n",
+              "      <td>1.239897</td>\n",
+              "      <td>0</td>\n",
+              "      <td>-0.206705</td>\n",
+              "      <td>2</td>\n",
+              "      <td>0</td>\n",
+              "      <td>2</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>0.290464</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>-0.663867</td>\n",
+              "      <td>2.082050</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1</td>\n",
+              "      <td>0.583939</td>\n",
+              "      <td>1</td>\n",
+              "      <td>-0.379244</td>\n",
+              "      <td>2</td>\n",
+              "      <td>0</td>\n",
+              "      <td>2</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>...</th>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>298</th>\n",
+              "      <td>0.290464</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0.478391</td>\n",
+              "      <td>-0.101730</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1</td>\n",
+              "      <td>-1.165281</td>\n",
+              "      <td>1</td>\n",
+              "      <td>-0.724323</td>\n",
+              "      <td>1</td>\n",
+              "      <td>0</td>\n",
+              "      <td>3</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>299</th>\n",
+              "      <td>-1.033002</td>\n",
+              "      <td>1</td>\n",
+              "      <td>3</td>\n",
+              "      <td>-1.234996</td>\n",
+              "      <td>0.342756</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1</td>\n",
+              "      <td>-0.771706</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0.138373</td>\n",
+              "      <td>1</td>\n",
+              "      <td>0</td>\n",
+              "      <td>3</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>300</th>\n",
+              "      <td>1.503641</td>\n",
+              "      <td>1</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0.706843</td>\n",
+              "      <td>-1.029353</td>\n",
+              "      <td>1</td>\n",
+              "      <td>1</td>\n",
+              "      <td>-0.378132</td>\n",
+              "      <td>0</td>\n",
+              "      <td>2.036303</td>\n",
+              "      <td>1</td>\n",
+              "      <td>2</td>\n",
+              "      <td>3</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>301</th>\n",
+              "      <td>0.290464</td>\n",
+              "      <td>1</td>\n",
+              "      <td>0</td>\n",
+              "      <td>-0.092738</td>\n",
+              "      <td>-2.227533</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1</td>\n",
+              "      <td>-1.515125</td>\n",
+              "      <td>1</td>\n",
+              "      <td>0.138373</td>\n",
+              "      <td>1</td>\n",
+              "      <td>1</td>\n",
+              "      <td>3</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>302</th>\n",
+              "      <td>0.290464</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1</td>\n",
+              "      <td>-0.092738</td>\n",
+              "      <td>-0.198357</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1.064975</td>\n",
+              "      <td>0</td>\n",
+              "      <td>-0.896862</td>\n",
+              "      <td>1</td>\n",
+              "      <td>1</td>\n",
+              "      <td>2</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "<p>303 rows × 13 columns</p>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "          age  sex  cp  trestbps      chol  ...  exang   oldpeak  slope  ca  thal\n",
+              "0    0.952197    1   3  0.763956 -0.256334  ...      0  1.087338      0   0     1\n",
+              "1   -1.915313    1   2 -0.092738  0.072199  ...      0  2.122573      0   0     2\n",
+              "2   -1.474158    0   1 -0.092738 -0.816773  ...      0  0.310912      2   0     2\n",
+              "3    0.180175    1   1 -0.663867 -0.198357  ...      0 -0.206705      2   0     2\n",
+              "4    0.290464    0   0 -0.663867  2.082050  ...      1 -0.379244      2   0     2\n",
+              "..        ...  ...  ..       ...       ...  ...    ...       ...    ...  ..   ...\n",
+              "298  0.290464    0   0  0.478391 -0.101730  ...      1 -0.724323      1   0     3\n",
+              "299 -1.033002    1   3 -1.234996  0.342756  ...      0  0.138373      1   0     3\n",
+              "300  1.503641    1   0  0.706843 -1.029353  ...      0  2.036303      1   2     3\n",
+              "301  0.290464    1   0 -0.092738 -2.227533  ...      1  0.138373      1   1     3\n",
+              "302  0.290464    0   1 -0.092738 -0.198357  ...      0 -0.896862      1   1     2\n",
+              "\n",
+              "[303 rows x 13 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 7
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "9a35Q9w6QqZd",
+        "outputId": "b42cfded-d8aa-4b21-ffeb-4e0b5c6152dc"
+      },
+      "source": [
+        "from sklearn.model_selection import train_test_split\n",
+        "\n",
+        "x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.3, random_state=101)\n",
+        "x_train.shape, x_test.shape, y_train.shape, y_test.shape"
+      ],
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "((212, 13), (91, 13), (212,), (91,))"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 8
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "fgRT5IlVQ5i8",
+        "outputId": "f4732a56-05c1-4dba-efde-b6c75396d769"
+      },
+      "source": [
+        "from sklearn.linear_model import LogisticRegression\n",
+        "\n",
+        "model = LogisticRegression()\n",
+        "model.fit(x_train, y_train)\n",
+        "\n",
+        "preds = model.predict(x_test)\n",
+        "preds"
+      ],
+      "execution_count": 9,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1,\n",
+              "       1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1,\n",
+              "       0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0,\n",
+              "       1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1,\n",
+              "       0, 1, 0])"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 9
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 314
+        },
+        "id": "9wVmlneSQ8Q1",
+        "outputId": "f300fd5d-2cba-47e4-8473-7cc2e04a1787"
+      },
+      "source": [
+        "from sklearn.metrics import accuracy_score, plot_confusion_matrix, classification_report\n",
+        "\n",
+        "model_acc = round(accuracy_score(y_test, preds) * 100, 3)\n",
+        "\n",
+        "print(f'Logistic Regression Accuracy: {model_acc}%')\n",
+        "plot_confusion_matrix(model, x_test, y_test, cmap=plt.cm.Blues)"
+      ],
+      "execution_count": 10,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Logistic Regression Accuracy: 86.813%\n"
+          ],
+          "name": "stdout"
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay at 0x7f2b9de9e6d0>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 10
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "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\n",
+            "text/plain": [
+              "<Figure size 432x288 with 2 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": [],
+            "needs_background": "light"
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "iCWtOKPWRChx"
+      },
+      "source": [
+        "# Import pickle Package\n",
+        "\n",
+        "import pickle"
+      ],
+      "execution_count": 12,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "oQ16_UZqU-w-"
+      },
+      "source": [
+        "# Save the Modle to file in the current working directory\n",
+        "\n",
+        "Pkl_Filename = \"Pickle_RL_Model.pkl\"  \n",
+        "\n",
+        "with open(Pkl_Filename, 'wb') as file:  \n",
+        "    pickle.dump(model, file)"
+      ],
+      "execution_count": 14,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "I5J0MEWCZEEU",
+        "outputId": "1f6222fd-8f4a-4c84-a015-66aede492fae"
+      },
+      "source": [
+        "# Load the Model back from file\n",
+        "with open(Pkl_Filename, 'rb') as file:  \n",
+        "    Pickled_LR_Model = pickle.load(file)\n",
+        "\n",
+        "Pickled_LR_Model"
+      ],
+      "execution_count": 15,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,\n",
+              "                   intercept_scaling=1, l1_ratio=None, max_iter=100,\n",
+              "                   multi_class='auto', n_jobs=None, penalty='l2',\n",
+              "                   random_state=None, solver='lbfgs', tol=0.0001, verbose=0,\n",
+              "                   warm_start=False)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 15
+        }
+      ]
+    }
+  ]
+}
